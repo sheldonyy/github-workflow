@@ -1,15 +1,77 @@
-name: Scheduled Task
+name: Anime Search Crawler
 
 on:
-  schedule:
-    - cron: "*/30 * * * *"
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - "检查项目是否存在/results.json"
+      - "检查项目是否存在/res.txt"
+      - "检查项目是否存在/fail.txt"
+  workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
-  run:
+  crawl:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Run command
-        run: echo "Hello World"
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Chrome
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wget gnupg
+          wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+          echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list
+          sudo apt-get update
+          sudo apt-get install -y google-chrome-stable
+
+      - name: Install dependencies
+        run: |
+          pip install selenium webdriver-manager zhconv
+
+      - name: Copy keywords.json
+        run: |
+          mkdir -p "检查项目是否存在"
+          cp keywords.json "检查项目是否存在/"
+
+      - name: Run crawler
+        run: |
+          cd "检查项目是否存在"
+          python runner.py
+        continue-on-error: true
+
+      - name: Upload results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: search-results
+          path: |
+            检查项目是否存在/results.json
+            检查项目是否存在/res.txt
+            检查项目是否存在/fail.txt
+          retention-days: 30
+
+      - name: Commit results to repo
+        if: always()
+        run: |
+          cd "检查项目是否存在"
+          git status
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          # 只添加结果文件，忽略不存在的文件
+          git add results.json res.txt fail.txt 2>/dev/null || true
+          # 移除不需要提交的文件
+          git restore --staged keywords.json __pycache__ 2>/dev/null || true
+          git status
+          git diff --cached --name-only
+          git commit -m "Update search results $(date -u +'%Y-%m-%dT%H:%M:%SZ')" || echo "No changes to commit"
+          git push || echo "Push failed"

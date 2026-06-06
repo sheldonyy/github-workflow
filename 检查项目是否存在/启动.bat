@@ -1,0 +1,1 @@
+conda activate tools && python index.py
