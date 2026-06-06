@@ -12,11 +12,11 @@ from datetime import datetime
 current_dir = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, current_dir)
 
-from utils import sarch_task, write_to_res, write_to_fail, ENCRYPTED_URL, XOR_KEY
+from utils import sarch_task, write_to_res, write_to_fail, ENCODED_URL
 from my_chrome import decrypt_url
 
 # 验证解密
-decrypted_url = decrypt_url(ENCRYPTED_URL, XOR_KEY)
+decrypted_url = decrypt_url(ENCODED_URL)
 print(f"[DEBUG] 解密后的 URL: {decrypted_url}")
 if not decrypted_url.startswith("http"):
     print(f"[ERROR] 解密失败，URL 格式不正确！")

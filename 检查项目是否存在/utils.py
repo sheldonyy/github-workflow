@@ -8,9 +8,8 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 
-# 加密的 URL 和密钥
-ENCRYPTED_URL = "êýÝÝÝÔëççåóðóÞææãõêýÝÝÝÔëççåóðóÞææãõêýÝÝÝÔëççåóðóÞææãõêýÝÝÝÔëççåóðóÞææãõêýÝÝÝÔëççåóðóÞææãõêýÝÝÝÔëççåóðóÞææãõêýÝÝÝÔëççåóðóÞææãõêýÝÝÝÔëççåóðóÞææãõêýÝÝÝÔëççåóðóÞææãõêýÝÝÝÔëççåóðóÞææãõêýÝÝÝÔëççåóðóÞææãõêýÝÝÝÔë"
-XOR_KEY = "acgn"
+# Base64 编码的 URL
+ENCODED_URL = "aHR0cHM6Ly93d3cuYWNnbmRvZy5jb20v"
 
 
 def write_to_res(keyword, filepath="res.txt"):
@@ -119,7 +118,7 @@ def sarch_task(val):
             # 创建爬虫实例（无头模式）
             crawler = MangaCrawler(headless=True)
             # 访问目标页面（使用解密后的 URL）
-            target_url = decrypt_url(ENCRYPTED_URL, XOR_KEY)
+            target_url = decrypt_url(ENCODED_URL)
             crawler.run(target_url)
 
             # 等待页面加载完成（首次多等一会）
