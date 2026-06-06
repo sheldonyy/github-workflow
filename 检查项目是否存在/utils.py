@@ -5,7 +5,7 @@ from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support.expected_conditions import EC
+from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 
 # 加密的 URL 和密钥
