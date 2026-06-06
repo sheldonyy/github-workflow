@@ -8,10 +8,28 @@ from webdriver_manager.chrome import ChromeDriverManager
 import os
 
 
+import base64
+
+
 def xor_decrypt(encrypted_str, key):
     """XOR 解密函数"""
     result = []
     for i, char in enumerate(encrypted_str):
+        result.append(chr(ord(char) ^ ord(key[i % len(key)])))
+    return ''.join(result)
+
+
+def decrypt_url(encrypted_url, key):
+    """先 XOR 解密，再 Base64 解码"""
+    xor_decrypted = xor_decrypt(encrypted_url, key)
+    return base64.b64decode(xor_decrypted).decode('utf-8')
+
+
+def encrypt_url(url, key):
+    """Base64 编码后再 XOR 加密"""
+    b64_encoded = base64.b64encode(url.encode('utf-8')).decode('utf-8')
+    result = []
+    for i, char in enumerate(b64_encoded):
         result.append(chr(ord(char) ^ ord(key[i % len(key)])))
     return ''.join(result)
 

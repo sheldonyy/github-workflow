@@ -1,4 +1,4 @@
-from my_chrome import MangaCrawler, xor_decrypt
+from my_chrome import MangaCrawler, decrypt_url
 import time
 import traceback
 from datetime import datetime
@@ -119,7 +119,7 @@ def sarch_task(val):
             # 创建爬虫实例（无头模式）
             crawler = MangaCrawler(headless=True)
             # 访问目标页面（使用解密后的 URL）
-            target_url = xor_decrypt(ENCRYPTED_URL, XOR_KEY)
+            target_url = decrypt_url(ENCRYPTED_URL, XOR_KEY)
             crawler.run(target_url)
 
             # 等待页面加载完成（首次多等一会）

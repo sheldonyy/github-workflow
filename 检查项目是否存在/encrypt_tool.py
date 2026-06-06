@@ -1,20 +1,29 @@
 #!/usr/bin/env python3
-"""URL XOR 加密工具"""
+"""URL 加密工具 - 生成可复制的加密字符串"""
+import base64
 import sys
 
-def xor_encrypt(text, key):
-    """XOR 加密函数"""
+def encrypt_url(url, key):
+    """Base64 编码后再 XOR 加密"""
+    b64_encoded = base64.b64encode(url.encode('utf-8')).decode('utf-8')
     result = []
-    for i, char in enumerate(text):
+    for i, char in enumerate(b64_encoded):
         result.append(chr(ord(char) ^ ord(key[i % len(key)])))
     return ''.join(result)
 
 if __name__ == "__main__":
-    url = input("请输入要加密的 URL: ").strip()
-    key = input("请输入加密密钥: ").strip()
+    url = "https://www.acgndog.com/"
+    key = "acgn"
 
-    encrypted = xor_encrypt(url, key)
-    print(f"\n加密后的字符串: {encrypted}")
-    print(f"\n将以下内容填入 utils.py:")
+    encrypted = encrypt_url(url, key)
+
+    # 输出可以直接粘贴到 Python 代码中的格式
+    print(f"URL: {url}")
+    print(f"Key: {key}")
+    print(f"加密后: {repr(encrypted)}")
+    print()
+    print("=" * 50)
+    print("复制以下内容到 utils.py:")
+    print("=" * 50)
     print(f'ENCRYPTED_URL = "{encrypted}"')
     print(f'XOR_KEY = "{key}"')
