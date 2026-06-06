@@ -15,6 +15,14 @@ sys.path.insert(0, current_dir)
 from utils import sarch_task, write_to_res, write_to_fail, ENCODED_URL
 from my_chrome import decrypt_url
 
+# 尝试导入 zhconv 进行繁简转换
+try:
+    from zhconv import convert
+except ImportError:
+    # 如果没有 zhconv，创建一个简单的转换函数
+    def convert(text, target):
+        return text.strip()
+
 # 验证解密
 decrypted_url = decrypt_url(ENCODED_URL)
 print(f"[DEBUG] 解密后的 URL: {decrypted_url}")
@@ -56,7 +64,9 @@ def main():
 
     # 加载关键词
     keywords = load_keywords(keywords_file)
-    print(f"加载了 {len(keywords)} 个关键词")
+    # 繁简转换
+    keywords = [convert(k.strip(), 'zh-cn') for k in keywords]
+    print(f"加载了 {len(keywords)} 个关键词（已转换繁简）")
 
     # 确保结果文件在正确目录
     os.chdir(current_dir)
